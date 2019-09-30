@@ -5,21 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<body style="margin: 0;">
+<body>
     <style>
-        @media screen and (max-width: 680px) {
+        body {
+            margin: 0;
+        }
+        #canvas, #canvas_behind {
+            border: 3px solid red; box-sizing: border-box; transform: scale(2); transform-origin: 0 0;
+        }
+        #canvas_behind {
+            position: absolute; top: 0; left: 0; z-index: -1;
+        }
+        @media screen and (max-width: 1040px) {
             #canvas, #canvas_behind {
                 transform: scale(1.5);
             }
         }
-        @media screen and (max-width: 500px) {
+        @media screen and (max-width: 810px) {
             #canvas, #canvas_behind {
                 transform: scale(1);
             }
         }
     </style>
-    <canvas id="canvas" width="400" height="280" style="border: 3px solid red; box-sizing: border-box; transform: scale(2); transform-origin: 0 0;"></canvas>
-    <canvas id="canvas_behind" width="400" height="280" style="border: 3px solid red; box-sizing: border-box; transform: scale(2); transform-origin: 0 0; position: absolute; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="canvas" width="540" height="370"></canvas>
+    <canvas id="canvas_behind" width="540" height="370"></canvas>
     <script src="./app.js"></script>
 </body>
 </html>

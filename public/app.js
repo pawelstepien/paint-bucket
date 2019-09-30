@@ -2,7 +2,6 @@ const cavnas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const cavnas_behind = document.getElementById('canvas');
 const ctx_behind = canvas_behind.getContext('2d');
-// ctx.imageSmoothingEnabled= false
 
 let canvasWidth = canvas.width;
 let canvasHeight = canvas.height;
@@ -29,21 +28,21 @@ const get2dPixelsMap = () => {
     return pixels2dMap;
 }
 
-// const pixels = get2dPixelsMap();
 const clickHandler = event => {
     const pixels = get2dPixelsMap();
     const clickX = event.offsetX;
     const clickY = event.offsetY;
 
+    console.log('clicked pixel rgba:', pixels[clickY][clickX])
+
     const colorRed = Math.ceil(Math.random() * 255);
     const colorGreen = Math.ceil(Math.random() * 255);
     const colorBlue = Math.ceil(Math.random() * 255);
-
-    // changePixelColor(clickX, clickY, `rgba(${colorRed},${colorGreen},${colorBlue},1)`)
     
     const pixelsToColor = getPixelsToColor(pixels, clickX, clickY, [colorRed, colorGreen, colorBlue]);
-    pixelsToColor.forEach(pixel => changePixelColor(pixel.x, pixel.y, `rgba(${colorRed},${colorGreen},${colorBlue},1)`))
-    console.log(pixels)
+    window.requestAnimationFrame(() => {
+        pixelsToColor.forEach(pixel => changePixelColor(pixel.x, pixel.y, `rgba(${colorRed},${colorGreen},${colorBlue},1)`))
+    })
 };
 
 const getPixelsToColor = (pixels, x, y, color) => {
@@ -54,16 +53,15 @@ const getPixelsToColor = (pixels, x, y, color) => {
     let compareColorsTotalTime = 0;
     
     const compareColors = (chosenColor, mapColor) => {
-        let result = /*chosenColor.every((chosenColorValue, colorValueIndex) => chosenColorValue === mapColor[colorValueIndex]) ||*/ mapColor[3] === 0;
+        let result = /*chosenColor.every((chosenColorValue, colorValueIndex) => chosenColorValue === mapColor[colorValueIndex]) ||*/ mapColor[3] < 30;
         compareColorsTotalTime += (compareColorsTime - new Date())*-1;
         compareColorsTime = new Date();
         return result;
     }
     
-    console.log('getPixelsToColor loop')
+    console.log('getPixelsToColor loop start')
     const loopTime = new Date();
     while(pixelsToCheckCoords.length > 0) {
-        // if (++iterations > 10000000) break;
         const pixelCoords = pixelsToCheckCoords.pop();
 
         const pixelRgba = pixels[pixelCoords.y][pixelCoords.x];
@@ -81,17 +79,34 @@ const getPixelsToColor = (pixels, x, y, color) => {
                 pixelsToColorCoords.push({x: pixelCoords.x, y : pixelCoords.y}); 
                 if (pixelCoords.x > 0 && compareColors(color, pixels[pixelCoords.y][pixelCoords.x - 1])) {
                     pixelsToCheckCoords.push({x :pixelCoords.x - 1, y: pixelCoords.y});
-                } 
+                } else {
+                    if (pixelCoords.x < canvasWidth-1 && compareColors(color, pixels[pixelCoords.y + 1][pixelCoords.x - 1])) {
+                        pixelsToCheckCoords.push({x :pixelCoords.x - 1, y: pixelCoords.y + 1});
+                    }
+                    if (pixelCoords.x > 0 && compareColors(color, pixels[pixelCoords.y - 1][pixelCoords.x - 1])) {
+                        pixelsToCheckCoords.push({x :pixelCoords.x - 1, y: pixelCoords.y - 1});
+                    }
+                }
                 if (pixelCoords.x < canvasWidth-1 && compareColors(color, pixels[pixelCoords.y][pixelCoords.x + 1])) {
                     pixelsToCheckCoords.push({x :pixelCoords.x + 1, y: pixelCoords.y});
+                } else {
+                    if (pixelCoords.x < canvasWidth-1 && compareColors(color, pixels[pixelCoords.y + 1][pixelCoords.x + 1])) {
+                        pixelsToCheckCoords.push({x :pixelCoords.x + 1, y: pixelCoords.y + 1});
+                    }
+                    if (pixelCoords.x < canvasWidth-1 && compareColors(color, pixels[pixelCoords.y - 1][pixelCoords.x + 1])) {
+                        pixelsToCheckCoords.push({x :pixelCoords.x + 1, y: pixelCoords.y - 1});
+                    }
                 }
+
+
+
             }
             pixelsToColorCoords.push({x: pixelCoords.x, y : pixelCoords.y}); 
             
         }
     }
-    // console.log('getPixelsToColor loopTime', Math.abs(loopTime - new Date()))
-    // console.log('compareColors', compareColorsTotalTime)
+    console.log('getPixelsToColor loopTime:', Math.abs(loopTime - new Date()))
+    console.log('compareColors time:', compareColorsTotalTime)
     return pixelsToColorCoords;
 };
 
@@ -105,14 +120,10 @@ const drawImageToColor = () => {
     image.addEventListener('load', () => {
         ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight);
     });
-    // image.setAttribute('crossOrigin', '');
     image.src = './image.png';
 }
 drawImageToColor();
 
-// ctx.beginPath();
-// ctx.arc(20, 15, 10, 0, 2 * Math.PI);
-// ctx.stroke();
 
 canvas.addEventListener('click', clickHandler);
 
