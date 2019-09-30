@@ -53,7 +53,7 @@ const getPixelsToColor = (pixels, x, y, color) => {
     let compareColorsTotalTime = 0;
     
     const compareColors = (chosenColor, mapColor) => {
-        let result = /*chosenColor.every((chosenColorValue, colorValueIndex) => chosenColorValue === mapColor[colorValueIndex]) ||*/ mapColor[3] < 30;
+        let result = /*chosenColor.every((chosenColorValue, colorValueIndex) => chosenColorValue === mapColor[colorValueIndex]) ||*/ mapColor[3] < 20;
         compareColorsTotalTime += (compareColorsTime - new Date())*-1;
         compareColorsTime = new Date();
         return result;
