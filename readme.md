@@ -1,6 +1,9 @@
 Paint bucket tool.
 It detects edges of clicked shape and fills it's inside with a random color.
 
+Live version:  
+https://pawelstepien.github.io/paint-bucket/public/
+
 
 To use on local machine
 
